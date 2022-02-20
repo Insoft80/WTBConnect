@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32126.317
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WTBConnect", "ConsoleApp2\WTBConnect.csproj", "{B099D23C-5C95-4E15-83DD-912FC68EC0DD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B099D23C-5C95-4E15-83DD-912FC68EC0DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B099D23C-5C95-4E15-83DD-912FC68EC0DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B099D23C-5C95-4E15-83DD-912FC68EC0DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B099D23C-5C95-4E15-83DD-912FC68EC0DD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {138A513F-35C3-494A-89E1-AA79511BAB87}
+	EndGlobalSection
+EndGlobal
