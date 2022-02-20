@@ -31,6 +31,7 @@ namespace WTBConnect
            
             
             }
+            Console.ReadLine();
             //Anzeige(pnpGeräte); Console.ReadLine();
         }
 
@@ -44,8 +45,13 @@ namespace WTBConnect
                 Split('\"')[1].Replace(@"\\", @"\") == p.DeviceID) && p.Status == "OK");
             Boolean found = false;
             Console.WriteLine("Detecting connected PNP Entities ...");
+            Console.CursorVisible = false;
+            int cl = Console.CursorLeft;
+            int ct = Console.CursorTop;
             foreach (var gerät in pnpGeräte)
             {
+                Console.CursorLeft = cl;
+                Console.CursorTop = ct;
                 Console.WriteLine("    " + gerät.Caption + "    DeviceID: " + gerät.DeviceID);
                 if (gerät.Caption.Contains("CH340"))
                 {
@@ -59,6 +65,7 @@ namespace WTBConnect
                             portName = gerät.Caption.Substring(pos1, pos2 - pos1);
                             found = true;
                             Console.WriteLine(portName + "!");
+                            break;
                         }
                         else
                         {
@@ -73,18 +80,18 @@ namespace WTBConnect
                 Console.WriteLine("ERROR detecting WTB device - not connected or no port information found!");
             return(portName);
         }
-        private static void Anzeige(IEnumerable<PnPEntity> pnpGeräte)
-        {
-            foreach (var gerät in pnpGeräte)
-                if (gerät.Caption.Contains("CH340"))
-                {
-                    Console.WriteLine($"******* Hab das Ding {gerät.Caption} gefunden ************");
-                    //gerät.Enable(false);
-                }
-                else
-                {
-                    Console.WriteLine(gerät.Caption + "    DeviceID: " + gerät.DeviceID + "    Beschreibung: " + gerät.Description + "    Hersteller: " + gerät.Manufacturer);
-                }
-        }
+        //private static void Anzeige(IEnumerable<PnPEntity> pnpGeräte)
+        //{
+        //    foreach (var gerät in pnpGeräte)
+        //        if (gerät.Caption.Contains("CH340"))
+        //        {
+        //            Console.WriteLine($"******* Hab das Ding {gerät.Caption} gefunden ************");
+        //            //gerät.Enable(false);
+        //        }
+        //        else
+        //        {
+        //            Console.WriteLine(gerät.Caption + "    DeviceID: " + gerät.DeviceID + "    Beschreibung: " + gerät.Description + "    Hersteller: " + gerät.Manufacturer);
+        //        }
+        //}
     }
 }
