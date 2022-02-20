@@ -21,13 +21,25 @@ namespace WTBConnect
             {
                 Console.WriteLine($"Connecting WTB device on {PortName}");
                 serialPort.PortName = PortName;
-           
-                serialPort.Open();
-            
-                string Message = serialPort.ReadLine();
-                Console.WriteLine(Message);
-                serialPort.Close();
+                serialPort.ReadTimeout = 2500;
+                serialPort.WriteTimeout = 500;  
+                DateTime Zeit = DateTime.Now;
+                try
+                {
+                    serialPort.Open();
+                    serialPort.DiscardInBuffer();
+                    string Message = serialPort.ReadLine();
+                    Console.WriteLine(Message);
+                    Message = serialPort.ReadLine();
+                    Console.WriteLine(Message);
 
+                    serialPort.Close();
+                }
+                catch (TimeoutException) { }
+                catch (UnauthorizedAccessException)
+                {
+                    Console.WriteLine("Error opening COM-Port!");
+                }
            
             
             }
