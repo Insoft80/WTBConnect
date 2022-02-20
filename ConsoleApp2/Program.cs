@@ -36,7 +36,7 @@ namespace WTBConnect
         }
 
         private static string GetPortName()
-            // Get name of USB port where Arduion is connected via CH340 chip
+            // Get name of USB port where Arduino is connected via CH340 chip
         {
             string portName = null;
             var usbController = USBControllerDevice.GetInstances().Cast<USBControllerDevice>();
