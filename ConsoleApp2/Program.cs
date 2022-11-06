@@ -21,17 +21,27 @@ namespace WTBConnect
             {
                 Console.WriteLine($"Connecting WTB device on {PortName}");
                 serialPort.PortName = PortName;
-                serialPort.ReadTimeout = 2500;
+                serialPort.ReadTimeout = 500;
                 serialPort.WriteTimeout = 500;  
                 DateTime Zeit = DateTime.Now;
+                int i = 27;
+                Byte[] sendBytes = {01, Convert.ToByte(Zeit.Year / 100), Convert.ToByte(Zeit.Year % 100), Convert.ToByte(Zeit.Day), Convert.ToByte(Zeit.Month), Convert.ToByte(Zeit.Hour), Convert.ToByte(Zeit.Minute), Convert.ToByte(Zeit.Second) };
                 try
                 {
                     serialPort.Open();
-                    serialPort.DiscardInBuffer();
+                    //serialPort.WriteLine("Hello");
+                    //serialPort.Write(Convert.ToString(i));
+                    serialPort.Write(sendBytes, 0, 8);
+                    //serialPort.DiscardInBuffer();
                     string Message = serialPort.ReadLine();
-                    Console.WriteLine(Message);
-                    Message = serialPort.ReadLine();
-                    Console.WriteLine(Message);
+                    while (true)
+                    {
+                        Console.WriteLine(Message);
+                        Message = serialPort.ReadLine();
+                    }
+                    //Console.WriteLine(Message);
+                    //Message = serialPort.ReadLine();
+                    //Console.WriteLine(Message);
 
                     serialPort.Close();
                 }
@@ -43,7 +53,9 @@ namespace WTBConnect
            
             
             }
+            
             Console.ReadLine();
+            serialPort.Close();
             //Anzeige(pnpGeräte); Console.ReadLine();
         }
 
