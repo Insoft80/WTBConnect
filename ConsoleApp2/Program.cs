@@ -29,8 +29,7 @@ namespace WTBConnect
                 try
                 {
                     serialPort.Open();
-                    //serialPort.WriteLine("Hello");
-                    //serialPort.Write(Convert.ToString(i));
+                    
                     serialPort.Write(sendBytes, 0, 8);
                     //serialPort.DiscardInBuffer();
                     string Message = serialPort.ReadLine();
