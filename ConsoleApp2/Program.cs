@@ -10,51 +10,201 @@ using System.IO.Ports;
 namespace WTBConnect
 
 {
+    enum Ports
+    {
+
+    }
+ 
     class Program
     {
-        static void Main(string[] args)
+     
+       class WTBI
         {
-            Console.WriteLine("WTB Connect V0.9");
-            SerialPort serialPort = new SerialPort();
-            string PortName = GetPortName();
-            if (!string.IsNullOrEmpty(PortName))
-            {
-                Console.WriteLine($"Connecting WTB device on {PortName}");
-                serialPort.PortName = PortName;
-                serialPort.ReadTimeout = 500;
-                serialPort.WriteTimeout = 500;  
-                DateTime Zeit = DateTime.Now;
-                int i = 27;
-                Byte[] sendBytes = {01, Convert.ToByte(Zeit.Year / 100), Convert.ToByte(Zeit.Year % 100), Convert.ToByte(Zeit.Day), Convert.ToByte(Zeit.Month), Convert.ToByte(Zeit.Hour), Convert.ToByte(Zeit.Minute), Convert.ToByte(Zeit.Second) };
-                try
-                {
-                    serialPort.Open();
-                    
-                    serialPort.Write(sendBytes, 0, 8);
-                    //serialPort.DiscardInBuffer();
-                    string Message = serialPort.ReadLine();
-                    while (true)
-                    {
-                        Console.WriteLine(Message);
-                        Message = serialPort.ReadLine();
-                    }
-                    //Console.WriteLine(Message);
-                    //Message = serialPort.ReadLine();
-                    //Console.WriteLine(Message);
+            private SerialPort serialPort = new SerialPort();
+            private string PortName;
 
-                    serialPort.Close();
-                }
-                catch (TimeoutException) { }
-                catch (UnauthorizedAccessException)
+            public bool Initialize()
+            {
+                bool success = false;
+                PortName = GetPortName();
+                if (!string.IsNullOrEmpty(PortName))
                 {
-                    Console.WriteLine("Error opening COM-Port!");
+                    Console.WriteLine($"Connecting WTB device on {PortName}");
+                    serialPort.PortName = PortName;
+                    serialPort.ReadTimeout = 500;
+                    serialPort.WriteTimeout = 500;
+                    DateTime Zeit = DateTime.Now;
+                    Byte[] sendBytes = { 01, Convert.ToByte(Zeit.Year / 100), Convert.ToByte(Zeit.Year % 100), Convert.ToByte(Zeit.Day), Convert.ToByte(Zeit.Month), Convert.ToByte(Zeit.Hour), Convert.ToByte(Zeit.Minute), Convert.ToByte(Zeit.Second) };
+
+                    try
+                    {
+                        serialPort.Open();
+
+                        serialPort.Write(sendBytes, 0, 8);
+                        success = true;
+                    }
+                    catch (TimeoutException) { success = false; }
+                    catch (UnauthorizedAccessException)
+                    {
+                        Console.WriteLine("Error opening COM-Port!");
+                        success = false;
+                    }
+
+                }                    
+                return (success);
+            }
+            public void Close()
+            {
+                serialPort.Close();
+            }
+
+            public void GetDump()
+            {
+                byte[] sendBytes = { 02, 00, 00, 00, 00, 00, 00, 00 };
+                serialPort.Write(sendBytes,0, 8);
+                string receiveString = serialPort.ReadLine();
+                while (!receiveString.Contains("/END"))
+                {
+                    Console.WriteLine(receiveString);
+                    receiveString = serialPort.ReadLine();
                 }
+                
+            }
+        }
+ 
+       static void Main(string[] args)
+        {
+            // SerialPort serialPort = new SerialPort();
+            Console.WriteLine("WTB Connect V1.1");
+            WTBI myWTBI = new WTBI();
+ 
+            if (myWTBI.Initialize())
+            {
+                Console.WriteLine("Success");
+            }
+            else
+            {
+                Console.WriteLine("***ERROR***");
+            }
+            bool userExit = false;
+            string userInput;
+            string[] userArgs;
+            while (!userExit)
+            {
+                Console.Write(">> ");
+                userInput = Console.ReadLine();
+                userArgs = userInput.Split(' ');
+                if (userArgs.Length == 0)
+                {
+                    userExit = true;
+                }
+                else
+                {
+                    switch (userArgs[0].ToUpper())
+                    {
+                        case "EXIT":
+                            userExit = true;
+                            break;
+                        case "SET":
+                            if (userArgs.Length > 1)
+                            {
+                                switch(userArgs[1].ToUpper())
+                                { 
+                                    
+                                    case "COLOR":
+                                        Console.WriteLine("<1> Work base color");
+                                        Console.WriteLine("<2> Work overtime color");
+                                        Console.WriteLine("<3> Work exceed color");
+                                        Console.WriteLine("<4> Break base color");
+                                        Console.WriteLine("<5> Break overtime color");
+                                        Console.WriteLine("<6> Daytime color");
+                                        Console.WriteLine("<0> Exit");
+                                        userInput = Console.ReadLine();
+                                        break;
+                                    case "/?":
+                                    case "/h":
+                                    default:
+                                        Console.WriteLine("SET <COLOR>|<LIMIT>|</?>|</h> [WORK]|[BREAK]|[TIME]");
+                                        break;
+                                }  
+
+                            }
+                            else
+                            {
+                                Console.WriteLine("Missing arguments for command SET. Type 'SET /?' or 'SET /h' for help");
+                            }
+                            break;
+                        case "GET":
+                            if (userArgs.Length > 1)
+                            {
+                                switch (userArgs[1].ToUpper())
+                                {
+                                    case "DUMP":
+                                        myWTBI.GetDump();
+                                        break;
+                                    default:
+                                        Console.WriteLine("Invalid argument for command GET. Type 'GET /?' or 'GET /h' for help");
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Missing arguments for command GET. Type 'GET /?' or 'GET /h' for help");
+                            }
+                            break;
+                        default:
+                            Console.WriteLine("Unknown command! Type 'Help' for instructions or 'EXIT'.");
+                            break;
+
+
+                    }
+
+                }
+
+
+            }
+            // string PortName = GetPortName();
+            //serialPort = new SerialPort();
+            //PortName = GetPortName();
+
+            //if (!string.IsNullOrEmpty(PortName))
+            //{
+            //    Console.WriteLine($"Connecting WTB device on {PortName}");
+            //    serialPort.PortName = PortName;
+            //    serialPort.ReadTimeout = 500;
+            //    serialPort.WriteTimeout = 500;  
+            //    DateTime Zeit = DateTime.Now;
+            //    int i = 27;
+            //    Byte[] sendBytes = {01, Convert.ToByte(Zeit.Year / 100), Convert.ToByte(Zeit.Year % 100), Convert.ToByte(Zeit.Day), Convert.ToByte(Zeit.Month), Convert.ToByte(Zeit.Hour), Convert.ToByte(Zeit.Minute), Convert.ToByte(Zeit.Second) };
+            //    try
+            //    {
+            //        serialPort.Open();
+                    
+            //        serialPort.Write(sendBytes, 0, 8);
+            //        //serialPort.DiscardInBuffer();
+            //        string Message = serialPort.ReadLine();
+            //        while (true)
+            //        {
+            //            Console.WriteLine(Message);
+            //            Message = serialPort.ReadLine();
+            //        }
+            //        //Console.WriteLine(Message);
+            //        //Message = serialPort.ReadLine();
+            //        //Console.WriteLine(Message);
+
+            //        serialPort.Close();
+            //    }
+            //    catch (TimeoutException) { }
+            //    catch (UnauthorizedAccessException)
+            //    {
+            //        Console.WriteLine("Error opening COM-Port!");
+            //    }
            
             
-            }
+            //}
             
-            Console.ReadLine();
-            serialPort.Close();
+            // Console.ReadLine();
+            myWTBI.Close();
             //Anzeige(pnpGeräte); Console.ReadLine();
         }
 
